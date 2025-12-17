@@ -124,23 +124,120 @@ Plan for today
             - error name
         - Redirect to /tasks, or useNavigate(-1)
 
-## Data Models (Frontend View)
-- User
-- Tasks
+## 2. Data Models (Frontend View)
+### User
+```
+{
+    id: string; // Mongo _id
+    email: string;
+    role: "user" | "admin";
+    // password: NEVER sent back to frontend
+}
+```
+### Tasks
+```
+{
+    id: string; // _id
+    user: string; // owner userId
+    title: string;
+    status: "todo" | "in_progress" | "done";
+    dueDate?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+```
 
-## Permissions and Rules
+## 3. Permissions and Rules
 - User
+    - Create tasks.
+    - List their own tasks (GET /tasks).
+    - View their own tasks (GET /tasks/:id).
+
 - Admin
+    - All of the above.
+    - List all tasks (GET /tasks).
+    - View any task by id (GET /tasks/:id).
 
-## API Contract (Request and Response body format)
-Auth Routes
-Task Routes
 
-## Frontend Architecture
+## 4. API Contract (Request and Response body format)
+### Auth Routes
+- POST `/auth/signup`
+    - Body: `{ "email": string, "password": string, "role": "user" | "admin" }`
+    - Response (201):
+    `{ "message": "User registered" }`
+
+- POST `/auth/login`
+    - Body: `{ "email": string, "password": string }`
+    - Response (200): `{ "token": string }`
+    - Token payload (decoded JWT): `{ "userId": string, "role": "user" | "admin", "iat": number, "exp": number }`
+
+- Protected routes:
+    - Require header:
+        - Authorization: Bearer `<token>`
+
+### Task Routes
+- GET `/tasks`
+    - Auth: required.
+    - Backend:
+        - admin → all tasks.
+        - user → tasks where user === userId from token.
+    - Response:
+        - Array of Task objects sorted by dueDate ascending.
+
+- POST `/tasks`
+    - Auth: required.
+    - Body:
+    `{ "title": string, "status"?: string, "dueDate"?: string }`
+    - Response (201): `{ "message": "New Task added.", "body": Task }`
+
+- GET `/tasks/:id`
+    - Auth: required.
+    - Response:
+        - `200`: Task object if user has access.
+        - `404`: `{ "error": "Task not found" }` if not found or not owned.
+
+## 5. Frontend Architecture
 ### Routes and layout
 
-### AuthContext
+#### Routes
+- `"/" ` -  `<App />`
+- `"/register"` - `<Register />`
+- `"/login"` - `<Login />`
+- `"/tasks"` - `<TasksPage />`   (protected)
+- `"/tasks/:id"` - `<TaskDetailPage />` (protected)
 
-### Tasks state
+#### Layout
+##### AuthContext
+AuthContext state:
+```
+{
+    userId: string | null;
+    role: "user" | "admin" | null;
+    token: string | null;
+    isAuthenticated: boolean;
+}
+```
+Methods:
+- `login(credentials)`:
+- Calls POST /auth/login.
+- Stores token and decoded { userId, role }
+- `logout()`:
+- Clears token and auth state.
+  
+All protected API calls read token from AuthContext and send `Authorization: Bearer <token>`.
+
+##### Tasks state
+Tasks state (initially local to pages):
+
+- tasks: `Task[]`
+- isLoading: `boolean`
+- error: `string | null`
+- filters: `{ status: string }`
+
+Methods:
+- `loadTasks()` → GET /tasks
+- `createTask()` → POST /tasks
+- Later: `updateTaskStatus()`, `deleteTask()` when backend routes exist.
 
 ## Start Building
+Now we work on Project Development
