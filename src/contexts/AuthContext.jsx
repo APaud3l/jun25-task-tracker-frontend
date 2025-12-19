@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext(null);
 const STORAGE_KEY = "taskTrackerAuth";
@@ -32,8 +32,30 @@ export function AuthProvider({ children }) {
     }
   });
 
+  useEffect(() => {
+    if (!auth.isAuthenticated) {
+        sessionStorage.removeItem(STORAGE_KEY);
+        return;
+    }
+
+    const { userId, role, token } = auth;
+    sessionStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ userId, role, token }),
+    );
+  }, [auth]);
+
+  const login = ({ userId, role, token }) => {
+    setAuth({ userId, role, token, isAuthenticated: true });
+  }
+
+  const logout = () => {
+    setAuth({ userId: null, role: null, token: null, isAuthenticated: false });
+  }
+
+
   return (
-    <AuthContext.Provider value={{...auth}} >{ children }</AuthContext.Provider>
+    <AuthContext.Provider value={{...auth, login, logout}} >{ children }</AuthContext.Provider>
   )
 }
 
