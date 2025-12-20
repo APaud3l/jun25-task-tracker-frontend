@@ -8,7 +8,7 @@ export async function loginRequest({ email, password }){
     });
 
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     if(!response.ok) {
         throw new Error(data.error || data.name || data.message || 'Login failed.');
     }
