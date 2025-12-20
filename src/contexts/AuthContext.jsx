@@ -1,9 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router";
 
 const AuthContext = createContext(null);
 const STORAGE_KEY = "taskTrackerAuth";
 
 export function AuthProvider({ children }) {
+  const navigate = useNavigate();
   const [auth, setAuth] = useState(() => {
     const saved = sessionStorage.getItem(STORAGE_KEY);
     if (!saved) {
@@ -51,6 +53,8 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     setAuth({ userId: null, role: null, token: null, isAuthenticated: false });
+    navigate('/');
+    
   }
 
 

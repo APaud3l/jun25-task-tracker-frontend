@@ -1,7 +1,7 @@
 import { API_BASE_URL } from "./config";
 
 export async function loginRequest({ email, password }){
-    const response = await fetch(`https://jun25-t2-task-tracker-api.onrender.com/api/v1/auth/login`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({email, password})
@@ -17,7 +17,7 @@ export async function loginRequest({ email, password }){
 }
 
 export async function signupRequest({ email, password, role }){
-        const response = await fetch(`https://jun25-t2-task-tracker-api.onrender.com/api/v1/auth/signup`, {
+        const response = await fetch(`${API_BASE_URL}/api/v1/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({email, password, role})

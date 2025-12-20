@@ -11,6 +11,14 @@ export default function TasksPage() {
   useEffect(() => {
     let isCancelled = false;
 
+    // If not authenticated, don't make any request to load the tasks.
+    if (!isAuthenticated || !token) {
+      setTasks([]);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
     async function loadTasks() {
       setLoading(true);
       setError(null);
