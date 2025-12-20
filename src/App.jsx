@@ -3,17 +3,18 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import AppRoutes from "./AppRoutes";
 import Footer from "./components/Footer";
+import { AuthProvider } from "./contexts/AuthContext";
 
 function App() {
   return (
     <BrowserRouter>
-      {/* <AuthProvider> */}
+      <AuthProvider>
         <Navbar />
         <main>
           <AppRoutes />
         </main>
         <Footer />
-      {/* </AuthProvider> */}
+      </AuthProvider>
     </BrowserRouter>
   );
 }
