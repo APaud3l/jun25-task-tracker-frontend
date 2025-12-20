@@ -12,7 +12,7 @@ export default function Navbar() {
     <header>
       <h1>Task Tracker</h1>
       <nav>
-        <Link to="/">Home</Link> | <Link to="/tasks">Tasks</Link> |{" "}
+        <Link to="/">Home</Link> | {" "}
         {!isAuthenticated ? (
           <>
             <Link to="/login">Login</Link> |{" "}
@@ -20,6 +20,7 @@ export default function Navbar() {
           </>
         ) : (
           <>
+          <Link to="/tasks">Tasks</Link> |
             <span>Logged in, ({role})</span>{" "}
             <button type="button" onClick={logout}>
               Logout
